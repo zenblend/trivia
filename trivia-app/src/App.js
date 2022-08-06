@@ -72,7 +72,7 @@ export default function App() {
         )
     })
 
-    console.log(theseQuestions)
+    
 
     return (
         <main id="main">
