@@ -1,7 +1,6 @@
 import React from "react"
 import Question from "./Question"
 import Answer from "./Answer"
-import {nanoid} from "nanoid"
 
 export default function App() {
 
@@ -33,7 +32,7 @@ export default function App() {
         
     }
 
-    const theseQuestions = questions.map(quest => {
+    const theseQuestions = questions.map((quest, idx) => {
 
         let arr = []
 
@@ -42,6 +41,7 @@ export default function App() {
                 <Answer 
                     answer={fixText(quest.incorrect_answers[i])}
                     onClick={handleClick}
+                    key={"ia" + idx + i}
                 />
             )
         }
@@ -50,17 +50,19 @@ export default function App() {
             <Answer 
                 answer={fixText(quest.correct_answer)}
                 onClick={handleClick}
+                key={"ca" + idx}
             />
         )
 
         shuffle(arr)
 
         return (
-            <div>
+            <div key={"main" + idx}>
                 <Question 
                     question={
                         fixText(quest.question)
                     } 
+                    key={"q" + idx}
                 />
                 <div id="answer-wrapper">
                     {arr[0]}
@@ -75,10 +77,12 @@ export default function App() {
     
 
     return (
+        <React.StrictMode>
         <main id="main">
             <div id="question-container">
                 {theseQuestions}
             </div>
         </main>
+        </React.StrictMode>
     )
 }
