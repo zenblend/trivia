@@ -9,9 +9,19 @@ export default function App() {
     React.useEffect(() => {
         fetch('https://opentdb.com/api.php?amount=10&category=15&difficulty=easy&type=multiple')
         .then(res => res.json())
-        .then(data => {setQuestions(data.results)})
+        .then(data => setQuestions(data.results.map(obj => {
+            return {
+                incorrect: obj.incorrect_answers,
+                correct: obj.correct_answer,
+                isSelected: false,
+                question: obj.question
+            }
+        })))
     }, [])
     
+    console.log("here are questions")
+    console.log(questions)
+
     function fixText(str){
         return str.replace(/&quot;/g, '"')
             .replace(/&#039;/g, '\'')
@@ -28,8 +38,8 @@ export default function App() {
         }
     }
 
-    function handleClick(){
-        
+    function handleClick(e){
+        console.log(e.currentTarget)
     }
 
     const theseQuestions = questions.map((quest, idx) => {
@@ -39,18 +49,20 @@ export default function App() {
         for(let i = 0; i < 3; i++){
             arr.push(
                 <Answer 
-                    answer={fixText(quest.incorrect_answers[i])}
+                    answer={fixText(quest.incorrect[i])}
                     onClick={handleClick}
                     key={"ia" + idx + i}
+                    isSelected={quest.isSelected}
                 />
             )
         }
         
         arr.push(
             <Answer 
-                answer={fixText(quest.correct_answer)}
+                answer={fixText(quest.correct)}
                 onClick={handleClick}
                 key={"ca" + idx}
+                isSelected={quest.isSelected}
             />
         )
 
@@ -74,7 +86,8 @@ export default function App() {
         )
     })
 
-    
+    console.log("here are theseQuestions")
+    console.log(theseQuestions)
 
     return (
         <React.StrictMode>
