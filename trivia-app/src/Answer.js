@@ -7,8 +7,8 @@ export default function Answer(props) {
     return (
         <>
             <button className="answer" 
-            style={styles} 
-            onClick={props.onClick} 
+                style={styles} 
+                onClick={props.onClick} 
             >{props.answer}</button>
         </>
     )
