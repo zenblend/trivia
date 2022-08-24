@@ -23,7 +23,7 @@ export default function App() {
 
             answers.push({
                 answer: obj.correct_answer,
-                isSelected: true,
+                isSelected: false,
                 id: 'ca' + index
             })
 
@@ -50,27 +50,35 @@ export default function App() {
             .replace(/&#039;/g, '\'')
             .replace(/&eacute;/g, 'é')
             .replace(/&amp;/g, '&')
+            .replace(/&Uuml;/g, 'Ü')
     }
 
+    //give question it's own ID (use index) and check passedID[2] against 
+    //question ID - if they match, return prevAnswer with isSelected: false,
+    //otherwise just return prevAnswer with no modification
     function handleClick(passedID){
         console.log(passedID)
-        // setQuestions(
-        //     questions.map(prevQuestion => {
-        //         if(passedID[0] === 'c'){
-        //             console.log('correct')
-        //             return {
-        //                 ...prevQuestion,
-        //                 theAnswers: {
-        //                     ...prevQuestion.answer,
-        //                     isSelected: !prevQuestion.correct.isSelected
-        //                 }
-        //             }
-        //         }else{
-        //             console.log('incorrect')
-        //             return prevQuestion
-        //         }
-        //     })
-        // )
+
+        setQuestions(
+            questions.map(prevQuestion => {
+                return {
+                    ...prevQuestion,
+                    allAnswers: prevQuestion.allAnswers.map(prevAnswer => {
+                        if(prevAnswer.id === passedID){
+                            return {
+                                ...prevAnswer,
+                                isSelected: !prevAnswer.isSelected
+                            }
+                        }else{
+                            return {
+                                ...prevAnswer,
+                                isSelected: false
+                            }
+                        }
+                    })
+                }
+            })
+        )
     }
 
     const theseQuestions = questions.map((quest, idx) => {
