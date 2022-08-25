@@ -31,7 +31,8 @@ export default function App() {
 
             return {
                 allAnswers: answers,
-                question: obj.question
+                question: obj.question,
+                id: '' + index
             }
         })))
     }, [])
@@ -53,29 +54,30 @@ export default function App() {
             .replace(/&Uuml;/g, 'Ü')
     }
 
-    //give question it's own ID (use index) and check passedID[2] against 
-    //question ID - if they match, return prevAnswer with isSelected: false,
-    //otherwise just return prevAnswer with no modification
     function handleClick(passedID){
         console.log(passedID)
 
         setQuestions(
             questions.map(prevQuestion => {
-                return {
-                    ...prevQuestion,
-                    allAnswers: prevQuestion.allAnswers.map(prevAnswer => {
-                        if(prevAnswer.id === passedID){
-                            return {
-                                ...prevAnswer,
-                                isSelected: !prevAnswer.isSelected
+                if(prevQuestion.id === passedID[2]){
+                    return {
+                        ...prevQuestion,
+                        allAnswers: prevQuestion.allAnswers.map(prevAnswer => {
+                            if(prevAnswer.id === passedID){
+                                return {
+                                    ...prevAnswer,
+                                    isSelected: !prevAnswer.isSelected
+                                }
+                            }else{
+                                return {
+                                    ...prevAnswer,
+                                    isSelected: false
+                                }
                             }
-                        }else{
-                            return {
-                                ...prevAnswer,
-                                isSelected: false
-                            }
-                        }
-                    })
+                        })
+                    }
+                }else{
+                    return prevQuestion
                 }
             })
         )
