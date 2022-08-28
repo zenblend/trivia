@@ -1,6 +1,7 @@
 import React from "react"
 import Question from "./Question"
 import Answer from "./Answer"
+import {shuffle, fixText} from "./functions"
 
 export default function App() {
 
@@ -37,26 +38,8 @@ export default function App() {
         })))
     }, [])
 
-    function shuffle(arr){
-        for(let i = arr.length - 1; i > 0; i--){
-            const j = Math.floor(Math.random() * (i + 1));
-            const temp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = temp;
-        }
-    }
-    
-    function fixText(str){
-        return str.replace(/&quot;/g, '"')
-            .replace(/&#039;/g, '\'')
-            .replace(/&eacute;/g, 'é')
-            .replace(/&amp;/g, '&')
-            .replace(/&Uuml;/g, 'Ü')
-    }
-
     function handleClick(passedID){
         console.log(passedID)
-
         setQuestions(
             questions.map(prevQuestion => {
                 if(prevQuestion.id === passedID[2]){
@@ -87,7 +70,7 @@ export default function App() {
 
         let arr = []
 
-        for(let i = 0; i < 4; i++){
+        for(let i = 0; i < quest.allAnswers.length; i++){
             arr.push(
                 <Answer 
                     answer={fixText(quest.allAnswers[i].answer)}
@@ -105,10 +88,7 @@ export default function App() {
                     key={"q" + idx}
                 />
                 <div id="answer-wrapper">
-                    {arr[0]}
-                    {arr[1]}
-                    {arr[2]}
-                    {arr[3]}
+                    {arr}
                 </div>
             </div>
         )
