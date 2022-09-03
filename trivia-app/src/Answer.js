@@ -1,7 +1,7 @@
 import React from "react"
 
 export default function Answer(props) {
-    const styles = props.isSelected ? {backgroundColor: "green"} : {backgroundColor: "white"}
+    const styles = props.isSelected ? {backgroundColor: "green"} : {backgroundColor: "white"} 
 
     return (
         <>

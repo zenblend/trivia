@@ -6,8 +6,12 @@ import {shuffle, fixText} from "./functions"
 export default function App() {
 
     const [questions, setQuestions] = React.useState([])
+    const [clickEnabled, setClickEnabled] = React.useState(true)
+    const [submitted, setSubmitted] = React.useState(false)
+
 
     React.useEffect(() => {
+
         fetch('https://opentdb.com/api.php?amount=10&category=15&difficulty=easy&type=multiple')
         .then(res => res.json())
         .then(data => setQuestions(data.results.map((obj, index) => {
@@ -66,6 +70,16 @@ export default function App() {
         )
     }
 
+    function handleSubmit() {
+        setClickEnabled(false)
+        setSubmitted(true)
+        window.scrollTo({top: 0})
+    }
+
+    function handleStartOver() {
+        window.location.reload()
+    }
+
     const theseQuestions = questions.map((quest, idx) => {
 
         let arr = []
@@ -74,7 +88,7 @@ export default function App() {
             arr.push(
                 <Answer 
                     answer={fixText(quest.allAnswers[i].answer)}
-                    onClick={ () => handleClick(quest.allAnswers[i].id)}
+                    onClick={ clickEnabled ? () => handleClick(quest.allAnswers[i].id) : undefined}
                     key={"ia" + idx + i}
                     isSelected={quest.allAnswers[i].isSelected}
                 />
@@ -97,9 +111,23 @@ export default function App() {
     return (
         <React.StrictMode>
         <main id="main">
+            {submitted && <h1 className="score">SCORE</h1>} 
             <div id="question-container">
                 {theseQuestions}
             </div>
+            <h1 className="warning">Nothing for now...</h1>
+            {!submitted && 
+                <button 
+                    className="submit" 
+                    onClick={handleSubmit}>Submit Answers
+                </button>
+            }
+            {submitted &&
+                <button
+                    className="again"
+                    onClick={handleStartOver}>Try Again?
+                </button>    
+            }
         </main>
         </React.StrictMode>
     )
