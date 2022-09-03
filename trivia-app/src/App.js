@@ -3,11 +3,15 @@ import Question from "./Question"
 import Answer from "./Answer"
 import {shuffle, fixText} from "./functions"
 
+let count = 0
+
 export default function App() {
 
     const [questions, setQuestions] = React.useState([])
     const [clickEnabled, setClickEnabled] = React.useState(true)
     const [submitted, setSubmitted] = React.useState(false)
+    const [warningText, setWarningText] = React.useState('')
+    const [scoreText, setScoreText] = React.useState('')
 
 
     React.useEffect(() => {
@@ -71,9 +75,31 @@ export default function App() {
     }
 
     function handleSubmit() {
-        setClickEnabled(false)
-        setSubmitted(true)
-        window.scrollTo({top: 0})
+
+        questions.map(quest => {
+
+            if(quest.allAnswers.filter(answer => answer.isSelected).length !== 1){
+                count++
+            }
+        })
+
+        if(count === 0){
+            //calc score and setScoreText() here and hope for the best
+
+            const score = questions.filter(question => 
+                question.allAnswers.filter(answer => 
+                    answer.isSelected && answer.id[0] === 'c').length === 1
+            ).length
+
+            setScoreText(`You got ${score} correct out of 10`)
+            setClickEnabled(false)
+            setSubmitted(true)
+            window.scrollTo({top: 0})
+        }else{
+            setWarningText(`You did not select ${count} answers`)
+        }
+
+        count = 0
     }
 
     function handleStartOver() {
@@ -111,22 +137,26 @@ export default function App() {
     return (
         <React.StrictMode>
         <main id="main">
-            {submitted && <h1 className="score">SCORE</h1>} 
-            <div id="question-container">
-                {theseQuestions}
-            </div>
-            <h1 className="warning">Nothing for now...</h1>
-            {!submitted && 
-                <button 
-                    className="submit" 
-                    onClick={handleSubmit}>Submit Answers
-                </button>
-            }
+            {submitted && 
+                <h1 className="score">{scoreText}</h1>
+            } 
             {submitted &&
                 <button
                     className="again"
                     onClick={handleStartOver}>Try Again?
                 </button>    
+            }
+                <div id="question-container">
+                    {theseQuestions}
+                </div>
+            {!submitted && 
+                <h1 className="warning">{warningText}</h1>
+            }
+            {!submitted && 
+                <button 
+                    className="submit" 
+                    onClick={handleSubmit}>Submit Answers
+                </button>
             }
         </main>
         </React.StrictMode>
