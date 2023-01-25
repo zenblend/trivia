@@ -1,20 +1,18 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import Question from "./Question"
 import Answer from "./Answer"
 import {shuffle, fixText} from "./functions"
 
-let count = 0
-
 export default function App() {
 
-    const [questions, setQuestions] = React.useState([])
-    const [clickEnabled, setClickEnabled] = React.useState(true)
-    const [submitted, setSubmitted] = React.useState(false)
-    const [warningText, setWarningText] = React.useState('')
-    const [scoreText, setScoreText] = React.useState('')
+    const [questions, setQuestions] = useState([])
+    const [clickEnabled, setClickEnabled] = useState(true)
+    const [submitted, setSubmitted] = useState(false)
+    const [warningText, setWarningText] = useState('')
+    const [scoreText, setScoreText] = useState('')
 
 
-    React.useEffect(() => {
+    useEffect(() => {
 
         fetch('https://opentdb.com/api.php?amount=10&category=15&difficulty=easy&type=multiple')
         .then(res => res.json())
@@ -75,21 +73,19 @@ export default function App() {
     }
 
     function handleSubmit() {
+        let count = 0
 
-        questions.map(quest => {
-
-            if(quest.allAnswers.filter(answer => answer.isSelected).length !== 1){
+        for(let i = 0; i < questions.length; i++){
+            if(questions[i].allAnswers.filter(answer => answer.isSelected).length !== 1){
                 count++
             }
-        })
+        }
 
         if(count === 0){
-            //calc score and setScoreText() here and hope for the best
-
             const score = questions.filter(question => 
-                question.allAnswers.filter(answer => 
-                    answer.isSelected && answer.id[0] === 'c').length === 1
-            ).length
+                            question.allAnswers.filter(answer => 
+                                answer.isSelected && answer.id[0] === 'c').length === 1
+                        ).length
 
             setScoreText(`You got ${score} correct out of 10`)
             setClickEnabled(false)
@@ -98,8 +94,6 @@ export default function App() {
         }else{
             setWarningText(`You did not select ${count} answers`)
         }
-
-        count = 0
     }
 
     function handleStartOver() {
@@ -115,7 +109,7 @@ export default function App() {
                 <Answer 
                     answer={fixText(quest.allAnswers[i].answer)}
                     onClick={ clickEnabled ? () => handleClick(quest.allAnswers[i].id) : undefined}
-                    key={"ia" + idx + i}
+                    key={quest.allAnswers[i].id}
                     isSelected={quest.allAnswers[i].isSelected}
                 />
             )
@@ -125,7 +119,7 @@ export default function App() {
             <div key={"main" + idx}>
                 <Question 
                     question={fixText(quest.question)} 
-                    key={"q" + idx}
+                    key={"q" + quest.id}
                 />
                 <div id="answer-wrapper">
                     {arr}
@@ -135,7 +129,6 @@ export default function App() {
     })
 
     return (
-        <React.StrictMode>
         <main id="main">
             {submitted && 
                 <h1 className="score">{scoreText}</h1>
@@ -159,6 +152,5 @@ export default function App() {
                 </button>
             }
         </main>
-        </React.StrictMode>
     )
 }
